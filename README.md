@@ -78,7 +78,7 @@ git clone https://github.com/electricbolt/8088
 echo "~/Documents/8088" >~/.xt8088v2
 ```
 
-`CPUTests.swift` will output an error with text `CPUTest opcode 00 skipped - The file “.xt8088v2” couldn’t be opened because there is no such file.` to
+`CPUTests.swift` will output error `CPUTest opcode 00 skipped - The file “.xt8088v2” couldn’t be opened because there is no such file` to
 the console if the Single Step Tests can't be found.
 
 #### Java/Android?
