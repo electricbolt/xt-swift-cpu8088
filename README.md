@@ -22,13 +22,13 @@ write them in assembly, and your code would be incompatible with a V20 CPU):
 - **F1** - `LOCK` (identical to **F0**).
 - **F6/1** - `TEST` (identical to **F6/0**).
 - **FE/2-7** - `CALL`,`JMP`,`PUSH`.
-- **FF/7** - `PUSH` (identical to **F7/6**). 
+- **FF/7** - `PUSH` (identical to **F7/6**).
 
 #### Installation
 
 Add the following to your Package.swift file:
 
-`.package(url: "https://github.com/electricbolt/xt-swift-cpu8088", from: "1.0.0")`
+`.package(url: "https://github.com/electricbolt/xt-swift-cpu8088", from: "2.0.0")`
 
 #### Usage
 
@@ -69,8 +69,9 @@ behaviour (except for instructions **F6/6** `DIV` (8-bit), **F7/6** `DIV` (16-bi
 algorithms, these instructions clear the undocumented flags instead). All unit tests _including_ the
 2.5 million Single Step Tests take about 15 seconds on an Apple MacBook Pro M4.
 
-The Single Step Tests are **not** included in the repository due to size (1.46GB). Instead clone them
-once onto your machine (they rarely change) and create a `.xt8088v2` file in your home directory that points to them:
+The Single Step Tests are **not** included in the repository due to size (1.46GB). Instead clone
+them once onto your machine (they rarely change) and create a `.xt8088v2` file in your home
+directory that points to them:
 
 ```bash
 cd ~/Documents
@@ -78,10 +79,11 @@ git clone https://github.com/electricbolt/8088
 echo "~/Documents/8088" >~/.xt8088v2
 ```
 
-`CPUTests.swift` will output an error with text `CPUTest opcode 00 skipped - The file “.xt8088v2” couldn’t be opened because there is no such file.` to
-the console if the Single Step Tests can't be found.
+`CPUTests.swift` will output the following error to the console if the Single Step Tests can't be
+found: `CPUTest opcode xx skipped - The file “.xt8088v2” couldn’t be opened because there is no
+such file.`
 
 #### Java/Android?
 
-xt-swift-cpu8088 is a port of my Java based CPU emulator (and MS-DOS command line program user 
-mode emulator) [XT](https://github.com/electricbolt/XT).
+xt-swift-cpu8088 is a port of my Java based CPU emulator (and MS-DOS command line program user mode
+emulator) [XT](https://github.com/electricbolt/XT).

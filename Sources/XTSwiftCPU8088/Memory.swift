@@ -137,7 +137,7 @@ public class Memory {
         let address = segOfs.toLinearAddress()
         let value = buf[address]
         if let permissions = permissions, (permissions[address] & Memory.PERMISSION_READ) == 0 {
-            cpu?.delegate.invalidMemoryAccess(cpu!, segOfs, Memory.PERMISSION_READ)
+            cpu?.delegate.invalidMemoryAccess(cpu!, segOfs, Memory.PERMISSION_READ, value)
         }
         return value
     }
@@ -152,7 +152,7 @@ public class Memory {
         let address = segOfs.toLinearAddress()
         let value = buf[address]
         if let permissions = permissions, (permissions[address] & Memory.PERMISSION_EXECUTE) == 0 {
-            cpu?.delegate.invalidMemoryAccess(cpu!, segOfs, Memory.PERMISSION_EXECUTE)
+            cpu?.delegate.invalidMemoryAccess(cpu!, segOfs, Memory.PERMISSION_EXECUTE, value)
         }
         return value
     }
@@ -166,7 +166,7 @@ public class Memory {
     public func writeByte(_ segOfs: SegOfs, _ value: UInt8) {
         let address = segOfs.toLinearAddress()
         if let permissions = permissions, (permissions[address] & Memory.PERMISSION_WRITE) == 0 {
-            cpu?.delegate.invalidMemoryAccess(cpu!, segOfs, Memory.PERMISSION_WRITE)
+            cpu?.delegate.invalidMemoryAccess(cpu!, segOfs, Memory.PERMISSION_WRITE, value)
         }
         buf[address] = value
     }
@@ -215,23 +215,12 @@ public class Memory {
         writeByte(segOfs, UInt8(truncatingIfNeeded: value >> 8))
     }
 
-    // MARK: - Internal
-
-    var buf: UnsafeMutableBufferPointer<UInt8>
-    private var permissions: UnsafeMutableBufferPointer<UInt8>?
-    unowned var cpu: CPU? = nil
-
-    deinit {
-        buf.deallocate()
-        permissions?.deallocate()
-    }
-
     /// Reads bytes directly from linear memory at the specified address 0x00000 - 0xFFFFF without any memory protection
     /// bits.
     ///
     /// Should only be used by unit tests. Terminates with a fatal error if linearAddress (+size) is not within the range above.
 
-    func getLinearData(_ linearAddress: Int, _ size: Int) -> [UInt8] {
+    public func getLinearData(_ linearAddress: Int, _ size: Int) -> [UInt8] {
         if size <= 0 || size > Memory.MEMORY_SIZE {
             fatalError("size argument (\(size)) is not in range 0..\(Memory.MEMORY_SIZE - 1)")
         }
@@ -246,7 +235,7 @@ public class Memory {
     ///
     /// Should only be used by unit tests. Terminates with a fatal error if linearAddress (+size) is not within the range above.
 
-    func putLinearData(_ linearAddress: Int, _ data: [UInt8], _ srcPos: Int, _ length: Int) {
+    public func putLinearData(_ linearAddress: Int, _ data: [UInt8], _ srcPos: Int, _ length: Int) {
         if data.isEmpty || data.count > Memory.MEMORY_SIZE {
             fatalError("data argument (\(data.count)) is not in range 0..\(Memory.MEMORY_SIZE - 1)")
         } else if linearAddress < 0 || linearAddress >= Memory.MEMORY_SIZE {
@@ -262,7 +251,7 @@ public class Memory {
     ///
     /// Should only be used by unit tests. Terminates with a fatal error if linearAddress is not within the range above.
 
-    func getLinearByte(_ linearAddress: Int) -> UInt8 {
+    public func getLinearByte(_ linearAddress: Int) -> UInt8 {
         return buf[linearAddress]
     }
 
@@ -271,7 +260,18 @@ public class Memory {
     ///
     /// Should only be used by unit tests. Terminates with a fatal error if linearAddress is not within the range above.
 
-    func setLinearByte(_ linearAddress: Int, _ value: UInt8) {
+    public func setLinearByte(_ linearAddress: Int, _ value: UInt8) {
         buf[linearAddress] = value
+    }
+
+    // MARK: - Internal
+
+    public var buf: UnsafeMutableBufferPointer<UInt8>
+    private var permissions: UnsafeMutableBufferPointer<UInt8>?
+    unowned var cpu: CPU? = nil
+
+    deinit {
+        buf.deallocate()
+        permissions?.deallocate()
     }
 }

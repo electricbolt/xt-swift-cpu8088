@@ -1,4 +1,4 @@
-// swift-tools-version: 6.3
+// swift-tools-version: 6.4
 
 import PackageDescription
 
@@ -19,5 +19,5 @@ let package = Package(
             dependencies: ["XTSwiftCPU8088"]
         ),
     ],
-    swiftLanguageModes: [.v6]
+    swiftLanguageModes: [.v5]
 )

@@ -73,8 +73,9 @@ public protocol CPUDelegate {
     ///
     /// - Parameter memoryAddress: address of the memory location being accessed.
     /// - Parameter permissionMask: permission bitmask that isn't allowed for the memory location.
+    /// - Parameter value: value that is read, write or fetched.
 
-    func invalidMemoryAccess(_ cpu: CPU, _ memoryAddress: SegOfs, _ permissionMask: UInt8)
+    func invalidMemoryAccess(_ cpu: CPU, _ memoryAddress: SegOfs, _ permissionMask: UInt8, _ value: UInt8)
 
     /// Invoked when an undocumented (unimplemented) opcode is encountered.
     ///
@@ -92,39 +93,39 @@ open class CPUDelegateAdapter: CPUDelegate {
     public init() {
     }
 
-    public func fetched8(_ cpu: CPU, _ value: UInt8, _ instructionCount: UInt64) {
+    open func fetched8(_ cpu: CPU, _ value: UInt8, _ instructionCount: UInt64) {
     }
 
-    public func fetched16(_ cpu: CPU, _ value: UInt16, _ instructionCount: UInt64) {
+    open func fetched16(_ cpu: CPU, _ value: UInt16, _ instructionCount: UInt64) {
     }
 
-    public func interrupt(_ cpu: CPU, _ value: UInt8) {
+    open func interrupt(_ cpu: CPU, _ value: UInt8) {
         cpu.terminate()
     }
 
-    public func halt(_ cpu: CPU) {
+    open func halt(_ cpu: CPU) {
         cpu.terminate()
     }
 
-    public func portRead8(_ cpu: CPU, _ address: UInt16) -> UInt8 {
+    open func portRead8(_ cpu: CPU, _ address: UInt16) -> UInt8 {
         return 0xFF
     }
 
-    public func portWrite8(_ cpu: CPU, _ address: UInt16, _ value: UInt8) {
+    open func portWrite8(_ cpu: CPU, _ address: UInt16, _ value: UInt8) {
     }
 
-    public func portRead16(_ cpu: CPU, _ address: UInt16) -> UInt16 {
+    open func portRead16(_ cpu: CPU, _ address: UInt16) -> UInt16 {
         return 0xFFFF
     }
 
-    public func portWrite16(_ cpu: CPU, _ address: UInt16, _ value: UInt16) {
+    open func portWrite16(_ cpu: CPU, _ address: UInt16, _ value: UInt16) {
     }
 
-    public func invalidMemoryAccess(_ cpu: CPU, _ memoryAddress: SegOfs, _ permissionMask: UInt8) {
+    open func invalidMemoryAccess(_ cpu: CPU, _ memoryAddress: SegOfs, _ permissionMask: UInt8, _ value: UInt8) {
         cpu.terminate()
     }
 
-    public func invalidOpcode(_ cpu: CPU, _ message: String) {
+    open func invalidOpcode(_ cpu: CPU, _ message: String) {
         cpu.terminate()
     }
 }

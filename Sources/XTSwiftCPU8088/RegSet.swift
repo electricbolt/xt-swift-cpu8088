@@ -40,6 +40,6 @@ public class RegSet: CustomStringConvertible {
     }
 
     public var description: String {
-        return "\(CS) \(IP) \(flags) \(AX) \(BX) \(CX) \(DX) \(DS) \(SI) \(ES) \(DI) \(SS) \(SP) \(BP)"
+        return "\(CS) \(IP) \(AX) \(BX) \(CX) \(DX) \(SI) \(DI) \(BP) \(SP) \(DS) \(ES) \(SS) \(flags)"
     }
 }

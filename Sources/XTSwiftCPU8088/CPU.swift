@@ -3,7 +3,7 @@
 
 import Foundation
 
-public class CPU: CustomStringConvertible {
+public class CPU : CustomStringConvertible {
 
     /// Get the CPU's delegate.
     public let delegate: CPUDelegate

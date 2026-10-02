@@ -3,7 +3,7 @@
 
 import Foundation
 
-public class SegOfs: CustomStringConvertible {
+public class SegOfs: CustomStringConvertible, Equatable {
 
     public init(_ segment: Reg16, _ offset: Reg16) {
         self.segment = segment.getValue()
@@ -63,9 +63,14 @@ public class SegOfs: CustomStringConvertible {
         return address
     }
 
+    /// Returns true if the addresses being compared have the same computed linear address.
+
+    public static func == (lhs: SegOfs, rhs: SegOfs) -> Bool {
+        return lhs.toLinearAddress() == rhs.toLinearAddress()
+    }
+
     // MARK: - Internal
 
     private var segment: UInt16
     private var offset: UInt16
-
 }
