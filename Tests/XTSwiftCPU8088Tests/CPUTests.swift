@@ -3,6 +3,7 @@
 
 import Testing
 import XTSwiftCPU8088
+import Foundation
 
 // Default behaviour of Xcode is to run all tests in parallel.
 

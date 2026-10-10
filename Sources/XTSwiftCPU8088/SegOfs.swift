@@ -56,10 +56,10 @@ public class SegOfs: CustomStringConvertible, Equatable {
         return String(format: "%04X:%04X (%05X %d)", segment, offset, toLinearAddress(), toLinearAddress())
     }
 
-    public func toLinearAddress() -> Int {
+    public func toLinearAddress(_ memorySize: Int = Memory.MEMORY_SIZE) -> Int {
         var address = Int(segment) << 4
         address = address + Int(offset)
-        address %= Memory.MEMORY_SIZE
+        address %= memorySize
         return address
     }
 

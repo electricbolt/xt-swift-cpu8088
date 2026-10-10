@@ -11,21 +11,21 @@ public class CPU : CustomStringConvertible {
     /// Get the CPU's register set.
     public let reg: RegSet = RegSet()
 
-    /// Get the CPU's 1MB of accessible RAM.
+    /// Get the CPU's accessible RAM (1MB, or 1MB + 64KB - 16B if the High Memory Area is enabled).
     public let memory: Memory
 
     /// Creates an 8088 CPU and 1MB of accessible RAM.
     ///
     /// - Parameter delegate: Instance of CPUDelegate to handle callbacks from the CPU emulator.
-    /// - Parameter hasPermissions: If true, enable capturing invalid memory reads, writes, and execution. The default
-    /// is false.
-    /// - Parameter zeroMemory: If true, initializes the RAM to all zeros. For unit-testing it is orders of magnitude
-    /// quicker to set this parameter to false. Note that in a physical PC, RAM would contain random values when
-    /// powered on. The default is false.
+    /// - Parameter hasPermissions: If true, enable capturing invalid memory reads, writes, and execution. The default is false.
+    /// - Parameter zeroMemory: If true, initializes the RAM to all zeros. For unit-testing it is orders of magnitude quicker to set this parameter to false.
+    /// Note that in a physical PC, RAM would contain random values when powered on. The default is false.
+    /// - Parameter hma: If true, enables the High Memory Area, increasing the CPU's accessible RAM from 1MB to 1MB + 64KB - 16B. The default is
+    /// false.
 
-    public init(delegate: CPUDelegate, hasPermissions: Bool = false, zeroMemory: Bool = false) {
+    public init(delegate: CPUDelegate, hasPermissions: Bool = false, zeroMemory: Bool = false, hma: Bool = false) {
         self.delegate = delegate
-        memory = Memory(hasPermissions: hasPermissions, zeroMemory: zeroMemory)
+        memory = Memory(hasPermissions: hasPermissions, zeroMemory: zeroMemory, hma: hma)
         memory.cpu = self
     }
 
@@ -712,8 +712,7 @@ public class CPU : CustomStringConvertible {
         return result
     }
 
-    /// Fetches a word from the address at CS:IP, then increments IP by 2. If IP was 0xFFFE or 0xFFFF it will wrap
-    /// around to 0x0 or 0x1.
+    /// Fetches a word from the address at CS:IP, then increments IP by 2. If IP was 0xFFFE or 0xFFFF it will wrap around to 0x0 or 0x1.
 
     func fetch16() -> UInt16 {
         let result = memory.fetchWord(SegOfs(reg.CS, reg.IP))
@@ -738,11 +737,11 @@ public class CPU : CustomStringConvertible {
         reg.flags.setValue16(pop16())
     }
 
-    /// Interrupt handler, which is called by 'software' INT, INT3, INTO instructions or as a result of a 'hardware'
-    /// error e.g. divide by zero, quotient overflow or AAM with base 0.
+    /// Interrupt handler, which is called by 'software' INT, INT3, INTO instructions or as a result of a 'hardware' error e.g. divide by zero, quotient overflow
+    /// or AAM with base 0.
     ///
-    /// To pass Single Step Tests, we must update the registers. The `CPUDelegate` will be invoked. If the CPUDelegate
-    /// wants to continue execution, it must invoke the `iret` method or pop the stack manually.
+    /// To pass Single Step Tests, we must update the registers. The `CPUDelegate` will be invoked. If the CPUDelegate wants to continue execution, it
+    /// must invoke the `iret` method or pop the stack manually.
 
     func interrupt(_ interrupt: UInt8) {
         push16(reg.flags.getValue16())
@@ -774,6 +773,7 @@ public class CPU : CustomStringConvertible {
     }
 
     /// Jump short to relative address if condition code is true.
+    /// 
     /// - Parameter flag: the condition code flag.
 
     func jcc(_ flag: Bool) {

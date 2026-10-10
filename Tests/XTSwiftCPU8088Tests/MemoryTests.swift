@@ -54,6 +54,22 @@ struct MemoryTests {
     }
 
     @Test
+    func hmaByteTests() {
+        let memory = Memory(hma: true)
+        #expect(memory.memorySize == Memory.HMA_MEMORY_SIZE)
+
+        let _FFFF_0010 = SegOfs(0xFFFF, 0x0010) // 1048576 enters the HMA, does not wrap.
+        memory.writeByte(_FFFF_0010, 0x9E)
+        #expect(memory.buf[1048576] == 0x9E)
+        #expect(memory.readByte(_FFFF_0010) == 0x9E)
+
+        let _FFFF_FFFF = SegOfs(0xFFFF, 0xFFFF) // 1114095 last byte of the HMA, does not wrap.
+        memory.writeByte(_FFFF_FFFF, 0x7A)
+        #expect(memory.buf[1114095] == 0x7A)
+        #expect(memory.readByte(_FFFF_FFFF) == 0x7A)
+    }
+
+    @Test
     func wordTests() {
         let memory = Memory()
 
@@ -82,5 +98,23 @@ struct MemoryTests {
         #expect(memory.buf[1048575] == 0x33)
         #expect(memory.buf[0] == 0x55)
         #expect(memory.readWord(_FFFF_000F) == 0x5533)
+    }
+
+    @Test
+    func hmaWordTests() {
+        let memory = Memory(hma: true)
+        #expect(memory.memorySize == Memory.HMA_MEMORY_SIZE)
+
+        let _FFFF_000F = SegOfs(0xFFFF, 0x000F) // 1048575/1048576 enters the HMA, does not wrap.
+        memory.writeWord(_FFFF_000F, 0xFE0A)
+        #expect(memory.buf[1048575] == 0x0A)
+        #expect(memory.buf[1048576] == 0xFE)
+        #expect(memory.readWord(_FFFF_000F) == 0xFE0A)
+
+        let _FFFF_FFFF = SegOfs(0xFFFF, 0xFFFF) // 1114095 last byte of the HMA, does not wrap.
+        memory.writeWord(_FFFF_FFFF, 0x5533)
+        #expect(memory.buf[1114095] == 0x33)
+        #expect(memory.buf[1048560] == 0x55) // 0xFFFF:0000
+        #expect(memory.readWord(_FFFF_FFFF) == 0x5533)
     }
 }

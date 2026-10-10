@@ -4,8 +4,7 @@
 
 The CPU emulator implements all *documented* 8086/8088 instructions. 
 
-The undocumented instructions are as follows, which are *not* implemented (as you *generally* don't
-write them in assembly, and your code would be incompatible with a V20 CPU):
+The undocumented instructions are as follows, which are *not* implemented (as you *generally* don't write them in assembly, and your code would be incompatible with a V20 CPU):
 
 - **0F** - `POP CS`.
 - **60-6F** - Conditional jumps (identical to **70-7F**)
@@ -28,12 +27,11 @@ write them in assembly, and your code would be incompatible with a V20 CPU):
 
 Add the following to your Package.swift file:
 
-`.package(url: "https://github.com/electricbolt/xt-swift-cpu8088", from: "2.0.0")`
+`.package(url: "https://github.com/electricbolt/xt-swift-cpu8088", from: "3.0.0")`
 
 #### Usage
 
-Create an instance of `CPU`, set up the initial register values and memory then `execute`. 
-(See ExampleTests.swift)
+Create an instance of `CPU`, set up the initial register values and memory then `execute`. (See ExampleTests.swift)
 
 ```
 import Testing
@@ -62,28 +60,20 @@ class ExampleTests: CPUDelegateAdapter {
 
 #### Unit tests
 
-The CPU emulator is unit tested against [Single Step Tests](https://github.com/electricbolt/8088) 
-(over 2.5 million tests) and all documented opcodes pass including exact *undocumented* flag 
-behaviour (except for instructions **F6/6** `DIV` (8-bit), **F7/6** `DIV` (16-bit), **F6/7** `IDIV`
-(8-bit), **F7/7** `IDIV` (16-bit), which would require a full microcode implementation of the
-algorithms, these instructions clear the undocumented flags instead). All unit tests _including_ the
-2.5 million Single Step Tests take about 15 seconds on an Apple MacBook Pro M4.
+The CPU emulator is unit tested against [Single Step Tests](https://github.com/electricbolt/8088) (over 2.5 million tests) and all documented opcodes pass including exact *undocumented* flag behaviour (except for instructions **F6/6**`DIV` (8-bit), **F7/6** `DIV` (16-bit), **F6/7** `IDIV` (8-bit), **F7/7** `IDIV` (16-bit), which would require a full microcode implementation of the algorithms, these instructions clear the undocumented flags instead). All unit tests _including_ the 2.5 million Single Step Tests take about 11 seconds on an Apple MacBook Pro M4.
 
-The Single Step Tests are **not** included in the repository due to size (1.46GB). Instead clone
-them once onto your machine (they rarely change) and create a `.xt8088v2` file in your home
-directory that points to them:
+The Single Step Tests are **not** included in the repository due to size (1.46GB). Instead clone them once onto your machine (they rarely change) and create a `.xt8088v2` file in your home directory that points to them:
 
 ```bash
-cd ~/Documents
+cd ~
 git clone https://github.com/electricbolt/8088
-echo "~/Documents/8088" >~/.xt8088v2
+echo "~/8088" >~/.xt8088v2
 ```
 
-`CPUTests.swift` will output the following error to the console if the Single Step Tests can't be
-found: `CPUTest opcode xx skipped - The file “.xt8088v2” couldn’t be opened because there is no
-such file.`
+We suggest putting the 8088 test suite in `~/8088`. If you place the 8088 test suite in `~/Documents/8088` then running the unit tests from within Xcode will fail unless you grant **Full Disk Access** to Xcode. Running `swift test` from the command line will work regardless of location of the 8088 test suite. 
+
+`CPUTests.swift` will output the following error to the console if the Single Step Tests can't be found: `CPUTest opcode <xx> <dir/xx.json.gz> skipped - The file “<xx>.json.gz” couldn’t be opened because there is no such file.`
 
 #### Java/Android?
 
-xt-swift-cpu8088 is a port of my Java based CPU emulator (and MS-DOS command line program user mode
-emulator) [XT](https://github.com/electricbolt/XT).
+xt-swift-cpu8088 is a port of my Java based CPU emulator (and MS-DOS command line program user mode emulator) [XT](https://github.com/electricbolt/XT).

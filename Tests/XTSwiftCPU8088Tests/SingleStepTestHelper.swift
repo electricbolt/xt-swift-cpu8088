@@ -23,21 +23,23 @@ class SingleStepTestHelper : CPUDelegateAdapter {
     }
     
     public func load() {
+        var dir: String = ""
         do {
             var homeDir = NSHomeDirectory()
             if !homeDir.hasSuffix("/") {
                 homeDir += "/"
             }
-            var dir = try String.init(contentsOf: URL(fileURLWithPath: "\(homeDir).xt8088v2"), encoding: .utf8)
+            dir = try String.init(contentsOf: URL(fileURLWithPath: "\(homeDir).xt8088v2"), encoding: .utf8)
             dir = dir.trimmingCharacters(in: .whitespacesAndNewlines)
             if !dir.hasSuffix("/") {
                 dir += "/"
             }
-            var data = try Data(contentsOf: URL(filePath: "\(dir)v2/\(opcode).json.gz"))
+            dir = "\(dir)v2/\(opcode).json.gz"
+            var data = try Data(contentsOf: URL(filePath: dir))
             data = try data.decompressGzip()
             opcodeTests = try JSONDecoder().decode(Array<OpcodeTest>.self, from: data)
         } catch {
-            print("CPUTest opcode \(opcode) skipped - \(error.localizedDescription)")
+            print("CPUTest opcode \(opcode) \(dir) skipped - \(error.localizedDescription)")
             return
         }
     }

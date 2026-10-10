@@ -22,6 +22,13 @@ struct SegOfsTests {
     }
 
     @Test
+    func segOfsHMATests() {
+        #expect(SegOfs(0xFFFF, 0x000F).toLinearAddress(Memory.HMA_MEMORY_SIZE) == 0xFFFFF)
+        #expect(SegOfs(0xFFFF, 0x0010).toLinearAddress(Memory.HMA_MEMORY_SIZE) == 0x100000) // No wrap, enters HMA.
+        #expect(SegOfs(0xFFFF, 0xFFFF).toLinearAddress(Memory.HMA_MEMORY_SIZE) == 0x10FFEF) // Last byte of HMA, no wrap.
+    }
+
+    @Test
     func segOfsTestsWithOffset() {
         let segOfs = SegOfs(0xB800, 0x0000)
         segOfs.addOffset(0x0000)
